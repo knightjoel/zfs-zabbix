@@ -9,7 +9,7 @@
 #include "fsutil.h"
 
 int
-zpool_get_count(zpool_handle_t * zhp, void * data) {
+zpool_get_count(__attribute__((unused)) zpool_handle_t * zhp, void * data) {
         unsigned int * iter = (unsigned int *)data;
         (*iter)++;
         return 0;

@@ -8,6 +8,8 @@
 #include "fsutil.h"
 #include "config.h"
 #include "stdprint.h"
+#include "vdev_status.h"
+#include "zio.h"
 
 /*
  * NOTE: libzfs is an unstable interface. 
@@ -19,15 +21,15 @@ int
 zpool_get_stats(zpool_handle_t * zhp, void * data) {
 	config_t * cnf = (config_t *)data;
 	uint_t c;
-        boolean_t missing;
+    boolean_t missing;
 
 	nvlist_t * nv, * config;
-        vdev_stat_t * vs;
+	vdev_stat_t * vs;
 
-        if (zpool_refresh_stats(zhp, &missing) != 0)
-                return 1;
+    if (zpool_refresh_stats(zhp, &missing) != 0)
+		return 1;
 
-        config = zpool_get_config(zhp, NULL);
+	config = zpool_get_config(zhp, NULL);
 
 	if (nvlist_lookup_nvlist(config,
                 ZPOOL_CONFIG_VDEV_TREE, &nv) != 0) {
@@ -74,7 +76,6 @@ zfs_get_stats(zfs_handle_t * zhf, void * data) {
 
 
 int main(int argc, char *argv[]) {
-    	libzfs_handle_t * g_zfs;
 	config_t cnf;
 
 	g_zfs = libzfs_init();
@@ -98,7 +99,8 @@ int main(int argc, char *argv[]) {
 
 	zpool_iter(g_zfs, zpool_get_stats, (void *)&cnf);
 	zfs_iter_root(g_zfs, zfs_get_stats, (void *)&cnf);
- 
+
+	zpool_iter(g_zfs, zpool_print_vdev, NULL);
 	if(cnf.zpool.name == NULL || cnf.zfs.name == NULL) {
 		fprintf(stderr, "zpool can't be find\n");
 		return 1;	
