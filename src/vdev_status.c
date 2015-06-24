@@ -5,14 +5,21 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdint.h>
-#include <malloc.h>
-#include "vdev_status.h"
+#include <stdlib.h>
+#include <string.h>
 #include "zio.h"
+#include "config.h"
+#include "vdev_status.h"
 
 int
 zpool_print_vdev(zpool_handle_t * zhp, void * data) {
+    config_t * cnf = (config_t *)data;
+    if (strncmp(cnf->zname, zpool_get_name(zhp), ZPOOL_MAXNAMELEN) != 0) {
+        return 0;
+    }
+
+
     zpool_status_t reason;
-    const char * health;
     uint_t c;
 
     char * msgId = NULL;
@@ -24,10 +31,6 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
 
     verify(nvlist_lookup_nvlist(config, ZPOOL_CONFIG_VDEV_TREE, &nvroot) == 0);
     verify(nvlist_lookup_uint64_array(nvroot, ZPOOL_CONFIG_VDEV_STATS, (uint64_t **)&vs, &c) == 0);
-
-    health = zpool_state_to_name(vs->vs_state, vs->vs_aux);
-    (void) printf("  pool: %s\n", zpool_get_name(zhp));
-    (void) printf(" state: %s\n", health);
 
     switch(reason) {
         case ZPOOL_STATUS_MISSING_DEV_R:
@@ -233,7 +236,7 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
 
     }
 
-    printf("\n\n\n\n");
+    zpool_close(zhp);
     return 0;
 }
 
@@ -244,7 +247,7 @@ print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv, int 
     uint_t c, children;
     vdev_stat_t * vs;
     char * vname;
-    char * state;
+    const char * state;
 
     if (nvlist_lookup_nvlist_array(nv, ZPOOL_CONFIG_CHILDREN, &child, &children) != 0)
         children = 0;
@@ -257,21 +260,19 @@ print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv, int 
 
     (void) printf("\n");
     for (c = 0; c < children; c++) {
-        uint64_t islog = B_FALSE, ishole = B_FALSE;
+        uint64_t islog = B_FALSE, ishole = B_FALSE, disk = B_FALSE;
 
         /* Don't print logs or holes here */
-        (void) nvlist_lookup_uint64(child[c], ZPOOL_CONFIG_IS_LOG,
-                                    &islog);
-        (void) nvlist_lookup_uint64(child[c], ZPOOL_CONFIG_IS_HOLE,
-                                    &ishole);
-        if (islog || ishole)
+        (void) nvlist_lookup_uint64(child[c], ZPOOL_CONFIG_IS_LOG, &islog);
+        (void) nvlist_lookup_uint64(child[c], ZPOOL_CONFIG_IS_HOLE, &ishole);
+        (void) nvlist_lookup_uint64(child[c], ZPOOL_CONFIG_VDEV_CHILDREN, &disk);
+        if (disk)
             continue;
+
         vname = zpool_vdev_name(g_zfs, zhp, child[c], B_TRUE);
         print_status_config(zhp, vname, child[c], depth + 2, isspare);
         free(vname);
     }
-
-
 
     return;
 }

@@ -17,6 +17,7 @@
  * Compile with: gcc -Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair zio.c config.c fsutil.c stdprint.c -o zio
  */
 
+
 int
 zpool_get_stats(zpool_handle_t * zhp, void * data) {
 	config_t * cnf = (config_t *)data;
@@ -61,7 +62,7 @@ zpool_get_stats(zpool_handle_t * zhp, void * data) {
 int
 zfs_get_stats(zfs_handle_t * zhf, void * data) {
 	config_t * cnf = (config_t *)data;
-	
+
 	if (!strcmp(zfs_get_name(zhf), cnf->zname)) {
 		cnf->zfs.used = zfs_get_used(zhf);			
 		cnf->zfs.compressratio = zfs_get_compressratio(zhf);
@@ -75,8 +76,10 @@ zfs_get_stats(zfs_handle_t * zhf, void * data) {
 }
 
 
-int main(int argc, char *argv[]) {
+int
+main(int argc, char *argv[]) {
 	config_t cnf;
+	cnf.zname[0] = '\0';
 
 	g_zfs = libzfs_init();
 
@@ -97,12 +100,13 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
+
 	zpool_iter(g_zfs, zpool_get_stats, (void *)&cnf);
 	zfs_iter_root(g_zfs, zfs_get_stats, (void *)&cnf);
 
-	zpool_iter(g_zfs, zpool_print_vdev, NULL);
+
 	if(cnf.zpool.name == NULL || cnf.zfs.name == NULL) {
-		fprintf(stderr, "zpool can't be find\n");
+		fprintf(stderr, "could not find zpool: %s\n", cnf.zname);
 		return 1;	
 	}
 
@@ -118,7 +122,8 @@ int main(int argc, char *argv[]) {
 	else if (cnf.sw == SW_REAL_USED) print_stats_real_used(&cnf);
 	else if (cnf.sw == SW_AVAILABLE) print_stats_available(&cnf);
 	else if (cnf.sw == SW_DEDUPRATIO)print_stats_dedupratio(&cnf);
-	 
+	else if (cnf.sw == SW_DEVICES) zpool_iter(g_zfs, zpool_print_vdev, (void *)&cnf);
+
 	libzfs_fini(g_zfs);
 	return 0;
 }

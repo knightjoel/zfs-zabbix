@@ -57,6 +57,7 @@ void get_config(int argc, char ** argv, config_t * cnf) {
 				else if (!strcmp("real", optarg))	cnf->sw = SW_REAL_USED;
 				else if (!strcmp("available", optarg))	cnf->sw = SW_AVAILABLE;
 				else if (!strcmp("pools", optarg))	cnf->sw = SW_POOLS;
+				else if (!strcmp("devices", optarg)) cnf->sw = SW_DEVICES;
 				else if (!strcmp("dedupratio", optarg)) cnf->sw = SW_DEDUPRATIO;
 				else {
 					fprintf(stderr, "unknown show type: %s\n", optarg);

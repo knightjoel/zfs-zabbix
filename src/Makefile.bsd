@@ -1,0 +1,25 @@
+PROG=           zio
+NO_MAN=         1
+SRCS=           zio.c config.c fsutil.c stdprint.c vdev_status.c
+
+CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libzpool/common
+CFLAGS+=        -I/usr/src/cddl/compat/opensolaris/include
+CFLAGS+=        -I/usr/src/cddl/compat/opensolaris/lib/libumem
+CFLAGS+=        -I/usr/src/sys/cddl/compat/opensolaris
+CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/head
+CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libuutil/common
+CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libzfs/common
+CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libumem/common
+CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libnvpair
+CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libzfs_core/common
+CFLAGS+=        -I/usr/src/sys/cddl/contrib/opensolaris/uts/common
+CFLAGS+=        -I/usr/src/sys/cddl/contrib/opensolaris/uts/common/fs/zfs
+CFLAGS+=        -I/usr/src/sys/cddl/contrib/opensolaris/uts/common/sys
+CFLAGS+=        -DNEED_SOLARIS_BOOLEAN
+
+DPADD=          ${LIBZFS} ${LIBGEOM} ${LIBBSDXML} ${LIBSBUF} \
+                ${LIBM} ${LIBNVPAIR} ${LIBUUTIL} ${LIBUTIL}
+LDADD=          -lzfs -lgeom -lbsdxml -lsbuf \
+                -lm -lnvpair -luutil -lutil
+
+.include <bsd.prog.mk>

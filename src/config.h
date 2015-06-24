@@ -5,7 +5,8 @@
 #include <sys/types.h>
 #include <sys/fs/zfs.h>
 
-#define ZIO_VERSION 0.2
+#define ZIO_VERSION 0.3
+#define VDEV_MAXNAMELEN 256
 
 enum ft_type {
 	TP_UNDEF = 0,
@@ -27,7 +28,8 @@ enum sw_type {
 	SW_REAL_USED,
 	SW_AVAILABLE,
 	SW_DEDUPRATIO,
-	SW_POOLS
+	SW_POOLS,
+	SW_DEVICES
 };
 
 typedef struct zfs_data {
@@ -55,8 +57,10 @@ typedef struct zpool_data {
 typedef struct config {
 	uint ft;			
 	uint sw;
+
 	char zname[ZAP_MAXNAMELEN];
-	
+	char vdev[VDEV_MAXNAMELEN];
+
 	zpool_data_t zpool;	
 	zfs_data_t zfs;
 } config_t;
