@@ -61,8 +61,8 @@ float
 zpool_get_dedupratio(zpool_handle_t * zhp) {
 	char dedupratio_str[32];
 	float dedupratio = 0;
-	
-	zpool_get_prop(zhp, ZPOOL_PROP_DEDUPRATIO, dedupratio_str, sizeof(dedupratio_str), NULL, false);	
+
+	zpool_get_prop(zhp, ZPOOL_PROP_DEDUPRATIO, dedupratio_str, sizeof(dedupratio_str), NULL, false);
 	dedupratio = atof(dedupratio_str);
 
 	return dedupratio;
@@ -79,6 +79,7 @@ zpool_get_health(zpool_handle_t * zhp) {
 const char *
 zpool_get_poolname(zpool_handle_t * zhp) {
 	static char zpool_name[ZAP_MAXNAMELEN];	
+
 
 	zpool_get_prop(zhp, ZPOOL_PROP_NAME, zpool_name, sizeof(zpool_name), NULL, false);
 	return zpool_name;

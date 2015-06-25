@@ -55,8 +55,8 @@ typedef struct zpool_data {
 } zpool_data_t;
 
 typedef struct config {
-	uint ft;			
-	uint sw;
+	unsigned int ft;
+	unsigned int sw;
 
 	char zname[ZAP_MAXNAMELEN];
 	char vdev[VDEV_MAXNAMELEN];
