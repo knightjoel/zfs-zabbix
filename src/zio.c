@@ -10,6 +10,7 @@
 #include "stdprint.h"
 #include "vdev_status.h"
 #include "zio.h"
+#include "memlist.h"
 
 /*
  * NOTE: libzfs is an unstable interface. 
@@ -79,31 +80,40 @@ zfs_get_stats(zfs_handle_t * zhf, void * data) {
 int
 main(int argc, char *argv[]) {
 	config_t cnf;
+	devlist_t d;
+
 	cnf.zname[0] = '\0';
 
 	g_zfs = libzfs_init();
 
 	init_config(&cnf);
+	init_devlist(&d);
+
 	get_config(argc, argv, &cnf);
+
+	zpool_iter(g_zfs, zpool_get_stats, (void *)&cnf);
+	zfs_iter_root(g_zfs, zfs_get_stats, (void *)&cnf);
+	zpool_iter(g_zfs, zpool_print_vdev, (void *)&d);
 
 	if (cnf.sw == SW_UNDEF) {
 		fprintf(stderr, "show type is not defined\n");
+
 		return 1;
-	} 
-	else if (cnf.sw == SW_POOLS) {
+	} else if (cnf.sw == SW_POOLS) {
 		if (cnf.ft == TP_UNDEF) {
 			fprintf(stderr, "undef format type\n");
 			return 1;
 		}
 		else if (cnf.ft == TP_TEXT) show_zpools(g_zfs);
 		else if (cnf.ft == TP_JSON) show_zpools_json(g_zfs);	
+
+		return 0;
+	} else if (cnf.sw == SW_DEVSTATE) {
+		find_state_in_devlist(&d, cnf.vdev);
+		free_devlist(&d);
+
 		return 0;
 	}
-
-
-	zpool_iter(g_zfs, zpool_get_stats, (void *)&cnf);
-	zfs_iter_root(g_zfs, zfs_get_stats, (void *)&cnf);
-
 
 	if(cnf.zpool.name == NULL || cnf.zfs.name == NULL) {
 		fprintf(stderr, "could not find zpool: %s\n", cnf.zname);
@@ -122,8 +132,18 @@ main(int argc, char *argv[]) {
 	else if (cnf.sw == SW_REAL_USED) print_stats_real_used(&cnf);
 	else if (cnf.sw == SW_AVAILABLE) print_stats_available(&cnf);
 	else if (cnf.sw == SW_DEDUPRATIO)print_stats_dedupratio(&cnf);
-	else if (cnf.sw == SW_DEVICES) zpool_iter(g_zfs, zpool_print_vdev, (void *)&cnf);
+	else if (cnf.sw == SW_DEVICES) {
+		if (cnf.ft == TP_UNDEF) {
+			fprintf(stderr, "undef format type\n");
+			return 1;
+		}
+		else if (cnf.ft == TP_TEXT) print_devlist_text(&d, cnf.zname);
+		else if (cnf.ft == TP_JSON) print_devlist_json(&d, cnf.zname);
+	}
 
+
+
+	free_devlist(&d);
 	libzfs_fini(g_zfs);
 	return 0;
 }

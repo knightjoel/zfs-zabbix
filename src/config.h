@@ -29,7 +29,8 @@ enum sw_type {
 	SW_AVAILABLE,
 	SW_DEDUPRATIO,
 	SW_POOLS,
-	SW_DEVICES
+	SW_DEVICES,
+	SW_DEVSTATE
 };
 
 typedef struct zfs_data {

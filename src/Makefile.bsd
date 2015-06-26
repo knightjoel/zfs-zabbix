@@ -1,6 +1,6 @@
 PROG=           zio
 NO_MAN=         1
-SRCS=           zio.c config.c fsutil.c stdprint.c vdev_status.c
+SRCS=           zio.c config.c fsutil.c stdprint.c vdev_status.c memlist.c
 
 CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libzpool/common
 CFLAGS+=        -I/usr/src/cddl/compat/opensolaris/include

@@ -18,14 +18,15 @@ void get_config(int argc, char ** argv, config_t * cnf) {
                 	{"version",         no_argument,        0, 'v'},
                 	{"help",            no_argument,        0, 'h'},
                 	{"show",            required_argument,  0, 's'},
-			{"zpool",	    required_argument,  0, 'z'},
+					{"zpool",	    	required_argument,  0, 'z'},
                 	{"format",          required_argument,  0, 'f'},
+					{"device",			required_argument,  0, 'd'},
             		{0, 0, 0, 0}
 		};
 	
 		/* getopt_long stores the option index here. */
         	int option_index = 0;
-        	c = getopt_long (argc, argv, "hvs:f:z:", long_options, &option_index);
+        	c = getopt_long (argc, argv, "hvs:f:z:d:", long_options, &option_index);
 	
 		/* Detect the end of the options. */
         	if (c == -1)
@@ -58,6 +59,7 @@ void get_config(int argc, char ** argv, config_t * cnf) {
 				else if (!strcmp("available", optarg))	cnf->sw = SW_AVAILABLE;
 				else if (!strcmp("pools", optarg))	cnf->sw = SW_POOLS;
 				else if (!strcmp("devices", optarg)) cnf->sw = SW_DEVICES;
+				else if (!strcmp("device-state", optarg)) cnf->sw = SW_DEVSTATE;
 				else if (!strcmp("dedupratio", optarg)) cnf->sw = SW_DEDUPRATIO;
 				else {
 					fprintf(stderr, "unknown show type: %s\n", optarg);
@@ -76,6 +78,10 @@ void get_config(int argc, char ** argv, config_t * cnf) {
 
 			case 'z':
 				strncpy(cnf->zname, optarg, sizeof(cnf->zname));
+				break;
+
+			case 'd':
+				strncpy(cnf->vdev, optarg, sizeof(cnf->vdev));
 				break;
 			
 			case 'h':
@@ -139,9 +145,10 @@ init_config(config_t * cnf) {
 
 void
 usage(char * app_name) {
-	fprintf(stdout, "%s: [-s <show>][-f <format>][-z <zpool>]\n\n", app_name);
+	fprintf(stdout, "%s: [-s <show>][-f <format>][-z <zpool>][-d <device>]\n\n", app_name);
 	fprintf(stdout, " -z | --zpool\t\tset zpool\n");
 	fprintf(stdout, " -s | --show\t\tshow zpools name\n");
+	fprintf(stdout, " -d | --device\t\tset device\n");
 	fprintf(stdout, " -f | --format\t\tset type of format [text, json]\n");
 	fprintf(stdout, " -h | --help\t\tshow this help menu\n");
 	fprintf(stdout, " -v | --version\t\tshow version\n");
@@ -155,9 +162,12 @@ usage(char * app_name) {
 			"\thealth\t\t- print health of zpool\n"
 			"\tlogical\t\t- print logical used space\n"
 			"\tcompress\t- print space saved by compress\n"
-			"\tdedupratio\t - print dedupratio of zpool\n"
+			"\tdedupratio\t- print dedupratio of zpool\n"
 			"\tused\t\t- print used space\n"
 			"\treal\t\t- print real used space after dedup\n"
-			"\tavailable\t- print available space\n");
+			"\tavailable\t- print available space\n\n"
+			"\tpools\t\t- print pools\n"
+	        "\tdevices\t\t- print devices in zpool\n"
+			"\tdevice-state\t- print state of device\n");
 	return;
 }

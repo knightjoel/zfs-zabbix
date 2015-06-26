@@ -10,14 +10,11 @@
 #include "zio.h"
 #include "config.h"
 #include "vdev_status.h"
+#include "memlist.h"
 
 int
 zpool_print_vdev(zpool_handle_t * zhp, void * data) {
-    config_t * cnf = (config_t *)data;
-    if (strncmp(cnf->zname, zpool_get_name(zhp), ZPOOL_MAXNAMELEN) != 0) {
-        return 0;
-    }
-
+    devlist_t * d = (devlist_t *)data;
 
     zpool_status_t reason;
     uint_t c;
@@ -232,7 +229,7 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
         pool_scan_stat_t * ps = NULL;
 
         (void) nvlist_lookup_uint64_array(nvroot, ZPOOL_CONFIG_SCAN_STATS, (uint64_t **)&ps, &c);
-        print_status_config(zhp, zpool_get_name(zhp), nvroot, 0, B_FALSE);
+        print_status_config(zhp, zpool_get_name(zhp), nvroot, d, 0, B_FALSE);
 
     }
 
@@ -241,7 +238,9 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
 }
 
 void
-print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv, int depth, boolean_t isspare) {
+print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv,
+                    devlist_t * d, int depth, boolean_t isspare) {
+
     nvlist_t ** child;
     uint_t c, children;
     vdev_stat_t * vs;
@@ -270,7 +269,7 @@ print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv, int 
         */
 
         vname = zpool_vdev_name(g_zfs, zhp, child[c], B_TRUE);
-        print_status_config(zhp, vname, child[c], depth + 2, isspare);
+        print_status_config(zhp, vname, child[c], d, depth + 2, isspare);
         free(vname);
     }
 
@@ -278,7 +277,7 @@ print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv, int 
     verify(nvlist_lookup_string(nv, ZPOOL_CONFIG_TYPE, &type) == 0);
 
     if (strcmp(type, VDEV_TYPE_DISK) == 0) {
-        (void) printf("%s\n", name);
+        add_to_devlist(d, name, state, zpool_get_name(zhp));
     }
 
     return;
