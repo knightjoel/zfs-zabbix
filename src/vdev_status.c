@@ -226,11 +226,16 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
         (void) printf("   see: http://zfsonlinux.org/msg/%s\n", msgId);
 
     if (config != NULL) {
+        nvlist_t ** spares;
+        uint_t nspares;
         pool_scan_stat_t * ps = NULL;
 
         (void) nvlist_lookup_uint64_array(nvroot, ZPOOL_CONFIG_SCAN_STATS, (uint64_t **)&ps, &c);
         print_status_config(zhp, zpool_get_name(zhp), nvroot, d, 0, B_FALSE);
 
+        if (nvlist_lookup_nvlist_array(nvroot, ZPOOL_CONFIG_SPARES, &spares, &nspares) == 0) {
+            print_spares(zhp, spares, nspares, d);
+        }
     }
 
     zpool_close(zhp);
@@ -244,41 +249,110 @@ print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv,
     nvlist_t ** child;
     uint_t c, children;
     vdev_stat_t * vs;
+    uint64_t notpresent;
     char * vname;
     const char * state = NULL;
+    const char * err_msg = NULL;
     char * type = NULL;
 
     if (nvlist_lookup_nvlist_array(nv, ZPOOL_CONFIG_CHILDREN, &child, &children) != 0)
-        children = 0;
+            children = 0;
 
     verify(nvlist_lookup_uint64_array(nv, ZPOOL_CONFIG_VDEV_STATS, (uint64_t **)&vs, &c) == 0);
 
     state = zpool_state_to_name(vs->vs_state, vs->vs_aux);
+    if (isspare) {
+        if (vs->vs_aux == VDEV_AUX_SPARED)
+            state = "INUSE";
+        else if (vs->vs_state == VDEV_STATE_HEALTHY)
+            state = "AVAIL";
+    }
+
+    if (nvlist_lookup_uint64(nv, ZPOOL_CONFIG_NOT_PRESENT, &notpresent) == 0) {
+        char *path;
+        verify(nvlist_lookup_string(nv, ZPOOL_CONFIG_PATH, &path) == 0);
+        (void) printf("  was %s", path);
+
+    } else if (vs->vs_aux != 0) {
+        switch (vs->vs_aux) {
+            case VDEV_AUX_OPEN_FAILED:
+                err_msg = "cannot open";
+                break;
+
+            case VDEV_AUX_BAD_GUID_SUM:
+                err_msg = "missing device";
+                break;
+
+            case VDEV_AUX_NO_REPLICAS:
+                err_msg = "insufficient replicas";
+                break;
+
+            case VDEV_AUX_VERSION_NEWER:
+                err_msg = "newer version";
+                break;
+
+            case VDEV_AUX_UNSUP_FEAT:
+                err_msg = "unsupported feature(s)";
+                break;
+
+            case VDEV_AUX_SPARED:
+                err_msg = "currently in use";
+                break;
+
+            case VDEV_AUX_ERR_EXCEEDED:
+                err_msg = "too many errors";
+                break;
+
+            case VDEV_AUX_IO_FAILURE:
+                err_msg = "experienced I/O failures";
+                break;
+
+            case VDEV_AUX_BAD_LOG:
+                err_msg = "bad intent log";
+                break;
+
+            case VDEV_AUX_EXTERNAL:
+                err_msg = "external device fault";
+                break;
+
+            case VDEV_AUX_SPLIT_POOL:
+                err_msg = "split into new pool";
+                break;
+
+            default:
+                err_msg = "corrupted data";
+                break;
+        }
+
+    }
 
     for (c = 0; c < children; c++) {
-        /*
-        uint64_t islog = B_FALSE, ishole = B_FALSE;
-
-
-        // Don't print logs or holes here
-        (void) nvlist_lookup_uint64(child[c], ZPOOL_CONFIG_IS_LOG, &islog);
-        (void) nvlist_lookup_uint64(child[c], ZPOOL_CONFIG_IS_HOLE, &ishole);
-        if (ishole || islog)
-            continue;
-
-        */
-
         vname = zpool_vdev_name(g_zfs, zhp, child[c], B_TRUE);
         print_status_config(zhp, vname, child[c], d, depth + 2, isspare);
         free(vname);
     }
 
-
     verify(nvlist_lookup_string(nv, ZPOOL_CONFIG_TYPE, &type) == 0);
 
     if (strcmp(type, VDEV_TYPE_DISK) == 0) {
-        add_to_devlist(d, name, state, zpool_get_name(zhp));
+        add_to_devlist(d, name, state, err_msg, zpool_get_name(zhp));
     }
 
+    return;
+}
+
+void
+print_spares(zpool_handle_t * zhp, nvlist_t ** spares, uint_t nspares, devlist_t * d) {
+    char * name = NULL;
+    uint_t i;
+
+    if (nspares == 0)
+        return;
+
+    for (i = 0; i < nspares; i++) {
+        name = zpool_vdev_name(g_zfs, zhp, spares[i], B_FALSE);
+        print_status_config(zhp, name, spares[i], d, 0, B_TRUE);
+        free(name);
+    }
     return;
 }

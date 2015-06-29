@@ -15,13 +15,14 @@ void
 init_devlist(devlist_t * d) {
     d->device = NULL;
     d->state  = NULL;
+    d->message= NULL;
     d->next   = NULL;
 
     return;
 }
 
 int
-add_to_devlist(devlist_t * d, const char * device, const char * state, const char * pool) {
+add_to_devlist(devlist_t * d, const char * device, const char * state, const char * message, const char * pool) {
     while (d->next != NULL) {
         d = d->next;
     }
@@ -40,6 +41,7 @@ add_to_devlist(devlist_t * d, const char * device, const char * state, const cha
     strcpy(d->device, device);
     strcpy(d->state, state);
     strncpy(d->pool, pool, ZPOOL_MAXNAMELEN);
+    d->message = message;
 
     return 0;
 }
@@ -48,7 +50,7 @@ int
 find_state_in_devlist(devlist_t * d, const char * search) {
     while (d->next != NULL) {
         if (strcmp(d->device, search) == 0) {
-            printf("%s\n", d->state);
+            printf("%s:%s\n", d->state, d->message);
             return 0;           // found
         }
 
