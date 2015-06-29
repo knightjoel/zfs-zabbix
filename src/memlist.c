@@ -50,7 +50,15 @@ int
 find_state_in_devlist(devlist_t * d, const char * search) {
     while (d->next != NULL) {
         if (strcmp(d->device, search) == 0) {
-            printf("%s:%s\n", d->state, d->message);
+            if (    strcmp(d->state, "ONLINE") == 0 ||
+                    strcmp(d->state, "AVAIL")  == 0 ||
+                    strcmp(d->state, "INUSE")  == 0 )
+                    printf("0\n");
+
+            else
+                    printf("1\n");
+
+
             return 0;           // found
         }
 
