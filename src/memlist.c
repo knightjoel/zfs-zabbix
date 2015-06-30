@@ -58,7 +58,7 @@ find_state_in_devlist(devlist_t * d, const char * search) {
             else
                     printf("1\n");
 
-
+//            printf("device:\t%s, state:\t%s, error:\t%s\n", d->device, d->state, d->message);
             return 0;           // found
         }
 
