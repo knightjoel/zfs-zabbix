@@ -12,8 +12,8 @@ int add_to_devlist(devlist_t * d, const char * device, const char * state, const
 void init_devlist(devlist_t * d);
 void free_devlist(devlist_t * d);
 int find_state_in_devlist(devlist_t * d, const char * search);
-void print_devlist_text(devlist_t * d, const char * pool);
-void print_devlist_json(devlist_t * d, const char * pool);
+void print_devlist_text(devlist_t * d);
+void print_devlist_json(devlist_t * d);
 
 struct devlist {
     char * device;

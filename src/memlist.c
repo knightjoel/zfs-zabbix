@@ -9,7 +9,7 @@
 #include "memlist.h"
 
 devlist_t * __getend(devlist_t * d);
-unsigned long int __pool_devices_count(devlist_t * d, const char * pool);
+unsigned long int __pool_devices_count(devlist_t * d);
 
 void
 init_devlist(devlist_t * d) {
@@ -69,10 +69,9 @@ find_state_in_devlist(devlist_t * d, const char * search) {
 }
 
 void
-print_devlist_text(devlist_t * d, const char * pool) {
+print_devlist_text(devlist_t * d) {
     while (d->next != NULL) {
-        if (strcmp(d->pool, pool) == 0)
-            printf("%s\n", d->device);
+        printf("%s\n", d->device);
 
         d = d->next;
     }
@@ -80,22 +79,20 @@ print_devlist_text(devlist_t * d, const char * pool) {
 }
 
 void
-print_devlist_json(devlist_t * d, const char * pool) {
+print_devlist_json(devlist_t * d) {
     unsigned long int c = 1, cnt_devices;
 
-    cnt_devices = __pool_devices_count(d, pool);
+    cnt_devices = __pool_devices_count(d);
     printf("{\n\t\"data\":[\n\n");
 
 
     while (d->next != NULL) {
-        if (strcmp(d->pool, pool) == 0) {
-            if (c != cnt_devices) {
-                printf("\t\t{ \"{#DEVNAME}\":\"%s\"\t\t\"{#DEVTYPE}\":\"disk\" },\n", d->device);
-            } else {
-                printf("\t\t{ \"{#DEVNAME}\":\"%s\"\t\t\"{#DEVTYPE}\":\"disk\" }\n", d->device);
-            }
-            c++;
+        if (c != cnt_devices) {
+            printf("\t\t{ \"{#DEVNAME}\":\"%s\",\t\t\"{#DEVTYPE}\":\"disk\" },\n", d->device);
+        } else {
+            printf("\t\t{ \"{#DEVNAME}\":\"%s\",\t\t\"{#DEVTYPE}\":\"disk\" }\n", d->device);
         }
+        c++;
 
         d = d->next;
     }
@@ -108,7 +105,7 @@ free_devlist(devlist_t * d) {
     devlist_t * end = NULL;
     long unsigned int c = 0, cnt_devices = 0;
 
-    cnt_devices = __pool_devices_count(d, NULL);
+    cnt_devices = __pool_devices_count(d);
 
     while(c <= cnt_devices-1) {
         end = __getend(d);
@@ -134,16 +131,10 @@ __getend(devlist_t * d) {
 }
 
 unsigned long int
-__pool_devices_count(devlist_t * d, const char * pool) {
+__pool_devices_count(devlist_t * d) {
     unsigned long int counter = 0;
     while (d->next != NULL) {
-        if (pool != NULL) {
-            if (strcmp(d->pool, pool) == 0)
-                counter++;
-        } else {
-            counter++;
-        }
-
+        counter++;
         d = d->next;
     }
 

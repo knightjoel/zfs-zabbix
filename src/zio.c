@@ -113,6 +113,15 @@ main(int argc, char *argv[]) {
 		free_devlist(&d);
 
 		return 0;
+	} else if (cnf.sw == SW_DEVICES) {
+		if (cnf.ft == TP_UNDEF) {
+			fprintf(stderr, "undef format type\n");
+			return 1;
+		}
+		else if (cnf.ft == TP_TEXT) print_devlist_text(&d);
+		else if (cnf.ft == TP_JSON) print_devlist_json(&d);
+
+		return 0;
 	}
 
 	if(cnf.zpool.name == NULL || cnf.zfs.name == NULL) {
@@ -132,14 +141,6 @@ main(int argc, char *argv[]) {
 	else if (cnf.sw == SW_REAL_USED) print_stats_real_used(&cnf);
 	else if (cnf.sw == SW_AVAILABLE) print_stats_available(&cnf);
 	else if (cnf.sw == SW_DEDUPRATIO)print_stats_dedupratio(&cnf);
-	else if (cnf.sw == SW_DEVICES) {
-		if (cnf.ft == TP_UNDEF) {
-			fprintf(stderr, "undef format type\n");
-			return 1;
-		}
-		else if (cnf.ft == TP_TEXT) print_devlist_text(&d, cnf.zname);
-		else if (cnf.ft == TP_JSON) print_devlist_json(&d, cnf.zname);
-	}
 
 
 
