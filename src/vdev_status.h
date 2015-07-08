@@ -15,4 +15,5 @@ void print_status_config(zpool_handle_t * zhp, const char * name, nvlist_t * nv,
                          devlist_t * d, int depth, boolean_t isspare);
 
 
+
 #endif //ZFS_ZABBIX_VDEV_STATUS_H

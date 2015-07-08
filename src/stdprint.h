@@ -15,5 +15,6 @@ void print_stats_used(config_t * cnf);
 void print_stats_real_used(config_t * cnf);
 void print_stats_available(config_t * cnf);
 void print_stats_dedupratio(config_t * cnf);
+void print_stats_ddt_memory(config_t * cnf);
 
 #endif

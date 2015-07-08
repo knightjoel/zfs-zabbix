@@ -11,6 +11,7 @@
 #include "vdev_status.h"
 #include "zio.h"
 #include "memlist.h"
+#include "dedup_stats.h"
 
 /*
  * NOTE: libzfs is an unstable interface. 
@@ -53,6 +54,7 @@ zpool_get_stats(zpool_handle_t * zhp, void * data) {
 		cnf->zpool.health = zpool_get_health(zhp);
 		cnf->zpool.dedupratio = zpool_get_dedupratio(zhp);
 		cnf->zpool.name = zpool_get_poolname(zhp);
+		cnf->zpool.ddt_memory = get_dedup_stats(config);
 	}
 	
 
@@ -141,6 +143,7 @@ main(int argc, char *argv[]) {
 	else if (cnf.sw == SW_REAL_USED) print_stats_real_used(&cnf);
 	else if (cnf.sw == SW_AVAILABLE) print_stats_available(&cnf);
 	else if (cnf.sw == SW_DEDUPRATIO)print_stats_dedupratio(&cnf);
+	else if (cnf.sw == SW_DDT)		 print_stats_ddt_memory(&cnf);
 
 
 

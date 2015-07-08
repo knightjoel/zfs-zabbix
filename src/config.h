@@ -30,7 +30,8 @@ enum sw_type {
 	SW_DEDUPRATIO,
 	SW_POOLS,
 	SW_DEVICES,
-	SW_DEVSTATE
+	SW_DEVSTATE,
+	SW_DDT
 };
 
 typedef struct zfs_data {
@@ -52,6 +53,7 @@ typedef struct zpool_data {
 	long long unsigned int write_bts;
 	long long unsigned int alloc;
 	long long unsigned int free;
+	long long unsigned int ddt_memory;
 	const char * health;
 } zpool_data_t;
 

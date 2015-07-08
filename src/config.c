@@ -61,6 +61,7 @@ void get_config(int argc, char ** argv, config_t * cnf) {
 				else if (!strcmp("devices", optarg)) cnf->sw = SW_DEVICES;
 				else if (!strcmp("device-state", optarg)) cnf->sw = SW_DEVSTATE;
 				else if (!strcmp("dedupratio", optarg)) cnf->sw = SW_DEDUPRATIO;
+				else if (!strcmp("ddt-memory", optarg)) cnf->sw = SW_DDT;
 				else {
 					fprintf(stderr, "unknown show type: %s\n", optarg);
 					exit(1);
@@ -131,6 +132,7 @@ init_config(config_t * cnf) {
 	cnf->zpool.free = 0;
 	cnf->zpool.health = NULL;
 	cnf->zpool.dedupratio = 0;
+	cnf->zpool.ddt_memory = 0;
 	cnf->zpool.name = NULL;
 	
 	/* init zfs parameters */
@@ -168,6 +170,7 @@ usage(char * app_name) {
 			"\tavailable\t- print available space\n\n"
 			"\tpools\t\t- print pools\n"
 	        "\tdevices\t\t- print devices in zpool\n"
-			"\tdevice-state\t- print state of device\n");
+			"\tdevice-state\t- print state of device\n"
+			"\tddt-memory\t- print size of deduplication table in memory\n");
 	return;
 }

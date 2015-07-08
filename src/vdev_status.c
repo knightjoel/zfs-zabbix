@@ -236,6 +236,7 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
         if (nvlist_lookup_nvlist_array(nvroot, ZPOOL_CONFIG_SPARES, &spares, &nspares) == 0) {
             print_spares(zhp, spares, nspares, d);
         }
+
     }
 
     zpool_close(zhp);
