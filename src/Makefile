@@ -22,7 +22,7 @@ CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libzfs_core/common
 CFLAGS+=        -I/usr/src/sys/cddl/contrib/opensolaris/uts/common
 CFLAGS+=        -I/usr/src/sys/cddl/contrib/opensolaris/uts/common/fs/zfs
 CFLAGS+=        -I/usr/src/sys/cddl/contrib/opensolaris/uts/common/sys
-CFLAGS+=        -DNEED_SOLARIS_BOOLEAN
+CFLAGS+=        -DNEED_SOLARIS_BOOLEAN -DBSD
 
 DPADD=          ${LIBZFS} ${LIBGEOM} ${LIBBSDXML} ${LIBSBUF} \
                 ${LIBM} ${LIBNVPAIR} ${LIBUUTIL} ${LIBUTIL}
@@ -34,6 +34,7 @@ ifeq ($(UNAME_S),Linux)
 CFLAGS+= 	-Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair
 CFLAGS+=        -I/usr/include/libspl
 CFLAGS+=        -I/usr/include/libzfs
+CLFAGS+= 	-DLINUX
 
 endif 
 
