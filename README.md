@@ -1,7 +1,7 @@
 # zfs-zabbix
 zabbix advanced monitoring of zfs
 
-###### help
+#### help
 
 <pre>
 zio --help
@@ -32,4 +32,40 @@ parameters for -s:
         devices         - print devices in zpool
         device-state    - print state of device
         ddt-memory      - print size of deduplication table in memory
+</pre>
+
+#### installation
+
+##### omnios:
+<pre>
+~# gmake CC="<path_to_compiler> -DSOLARIS"
+</pre>
+
+##### openindiana:<br>
+<pre>
+~# gmake CC="/opt/gcc/4.4.4/bin/gcc -DOI"
+</pre>
+
+hint: problem with linker
+<pre>
+ld: fatal: file crt1.o: open failed: No such file or directory
+collect2: ld returned 1 exit status
+gmake: *** [zio] Error 1
+</pre>
+
+solution: install package "lint"
+<pre>
+~# pkg install pkg://openindiana.org/developer/library/lint
+</pre>
+
+
+
+##### freebsd:
+<pre>
+~# gmake -f Makefile
+</pre>
+
+##### linux:
+<pre>
+~# make -f Makefile
 </pre>
