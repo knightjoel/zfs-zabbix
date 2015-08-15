@@ -10,7 +10,7 @@
 long long unsigned int
 get_dedup_stats(nvlist_t * config) {
     ddt_object_t * ddo;
-    uint c;
+    unsigned int c;
 
     if (nvlist_lookup_uint64_array(config, ZPOOL_CONFIG_DDT_OBJ_STATS, (uint64_t **)&ddo, &c) != 0)
         return 0;

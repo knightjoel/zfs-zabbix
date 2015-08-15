@@ -62,9 +62,13 @@ zpool_get_dedupratio(zpool_handle_t * zhp) {
 	char dedupratio_str[32];
 	float dedupratio = 0;
 
+#if defined(SOLARIS) || defined(BSD)
 	zpool_get_prop(zhp, ZPOOL_PROP_DEDUPRATIO, dedupratio_str, sizeof(dedupratio_str), NULL, false);
+#endif
+#if defined(LINUX) || defined(OI)
+	zpool_get_prop(zhp, ZPOOL_PROP_DEDUPRATIO, dedupratio_str, sizeof(dedupratio_str), NULL);
+#endif
 	dedupratio = atof(dedupratio_str);
-
 	return dedupratio;
 }
 
@@ -72,7 +76,12 @@ const char *
 zpool_get_health(zpool_handle_t * zhp) {
 	static char health[32];
 
+#if defined(SOLARIS) || defined(BSD)
 	zpool_get_prop(zhp, ZPOOL_PROP_HEALTH, health, sizeof(health), NULL, false);
+#endif
+#if defined(LINUX) || defined(OI)
+	zpool_get_prop(zhp, ZPOOL_PROP_HEALTH, health, sizeof(health), NULL);
+#endif
 	return health;
 }
 
@@ -80,8 +89,12 @@ const char *
 zpool_get_poolname(zpool_handle_t * zhp) {
 	static char zpool_name[ZAP_MAXNAMELEN];	
 
-
+#if defined(SOLARIS) || defined(BSD)
 	zpool_get_prop(zhp, ZPOOL_PROP_NAME, zpool_name, sizeof(zpool_name), NULL, false);
+#endif
+#if defined(LINUX) || defined(OI)
+	zpool_get_prop(zhp, ZPOOL_PROP_NAME, zpool_name, sizeof(zpool_name), NULL);
+#endif
 	return zpool_name;
 }
 
@@ -91,7 +104,7 @@ zfs_get_compressratio(zfs_handle_t * zhf) {
 	float compressratio = 0;
 
 	zfs_prop_get(zhf, ZFS_PROP_COMPRESSRATIO, compressratio_str, sizeof(compressratio_str), NULL, NULL, 0, false);
-	compressratio = atof(compressratio_str);		
+	compressratio = atof(compressratio_str);
 
 	return compressratio;
 }
@@ -100,6 +113,7 @@ long long unsigned int
 zfs_get_used(zfs_handle_t * zhf) {
 	long long unsigned int zfs_used = 0;
 	char zfs_used_str[256];
+
 	
 	zfs_prop_get(zhf, ZFS_PROP_USED, zfs_used_str, sizeof(zfs_used_str), NULL, NULL, 0, true);
 	zfs_used = atoll(zfs_used_str);

@@ -1,7 +1,14 @@
-PROG=           zio
-NO_MAN=         1
 SRCS=           zio.c config.c fsutil.c stdprint.c vdev_status.c memlist.c dedup_stats.c
+OBJ=            config.o fsutil.o stdprint.o vdev_status.o zio.o memlist.o dedup_stats.o
+PROG=           zio
+NO_MAN=         1 
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),SunOS)
+CFLAGS +=       -Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair
+
+endif
+ifeq ($(UNAME_S),FreeBSD)
 CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libzpool/common
 CFLAGS+=        -I/usr/src/cddl/compat/opensolaris/include
 CFLAGS+=        -I/usr/src/cddl/compat/opensolaris/lib/libumem
@@ -22,4 +29,16 @@ DPADD=          ${LIBZFS} ${LIBGEOM} ${LIBBSDXML} ${LIBSBUF} \
 LDADD=          -lzfs -lgeom -lbsdxml -lsbuf \
                 -lm -lnvpair -luutil -lutil
 
-.include <bsd.prog.mk>
+endif
+ifeq ($(UNAME_S),Linux)
+CFLAGS+= 	-Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair
+CFLAGS+=        -I/usr/include/libspl
+CFLAGS+=        -I/usr/include/libzfs
+
+endif 
+
+zio: zio.c $(OBJ)
+	$(CC) $(CFLAGS) $(LDADD) $(DPADD) -o $@ $(OBJ) 
+
+clean:
+	rm -f *.o zio

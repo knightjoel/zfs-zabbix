@@ -23,8 +23,14 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
     nvlist_t * config, * nvroot;
     vdev_stat_t * vs;
 
-    config = zpool_get_config(zhp, NULL);
+#if defined(LINUX)
+    zpool_errata_t errata;
+    reason = zpool_get_status(zhp, &msgId, &errata);
+#else
     reason = zpool_get_status(zhp, &msgId);
+#endif
+
+    config = zpool_get_config(zhp, NULL);
 
     verify(nvlist_lookup_nvlist(config, ZPOOL_CONFIG_VDEV_TREE, &nvroot) == 0);
     verify(nvlist_lookup_uint64_array(nvroot, ZPOOL_CONFIG_VDEV_STATS, (uint64_t **)&vs, &c) == 0);
