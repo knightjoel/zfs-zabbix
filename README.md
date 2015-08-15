@@ -69,3 +69,50 @@ solution: install package "lint"
 <pre>
 ~# make -f Makefile
 </pre>
+
+
+#### examples
+
+<pre>
+~# zpool list
+NAME      SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+data_01  1.98G  56.5K  1.98G         -     0%     0%  1.00x  ONLINE  -
+~# zio -s pools -f json
+{
+        "data":[
+
+                { "{#FSNAME}":"data_01",                "{#FSTYPE}":"zfs" }
+
+        ]
+}
+~# zio -s devices -f json -z data_01
+{
+        "data":[
+
+                { "{#DEVNAME}":"sdb",           "{#DEVTYPE}":"disk" },
+                { "{#DEVNAME}":"sdc",           "{#DEVTYPE}":"disk" }
+
+        ]
+}
+~# zio -s health -z data_01
+0
+~# zio -s device-state -d sdb
+0
+~# zio -s all -z data_01
+zpool:          data_01
+read_ops:       0
+write_ops:      107
+read_bts:       0
+write_bts:      97280
+alloc:          57856
+free:           2130648576
+health:         ONLINE
+ddt_memory:     0
+dedupratio:     1.00
+
+zfs:            data_01
+used:           56320
+available:      2097095680
+logical:        22016
+compressratio:  1.00
+</pre>
