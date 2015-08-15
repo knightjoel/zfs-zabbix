@@ -38,12 +38,12 @@ parameters for -s:
 
 ##### omnios:
 <pre>
-~# gmake CC="<path_to_compiler> -DSOLARIS"
+~# gmake CC="path_to_compiler -DSOLARIS"
 </pre>
 
 ##### openindiana:<br>
 <pre>
-~# gmake CC="/opt/gcc/4.4.4/bin/gcc -DOI"
+~# gmake CC="path_to_compiler -DOI"
 </pre>
 
 hint: problem with linker
