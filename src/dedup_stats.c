@@ -2,9 +2,9 @@
 // Created by burso on 7/8/15.
 //
 
-#include "dedup_stats.h"
 #include <sys/types.h>
 #include <stdio.h>
+#include "dedup_stats.h"
 
 
 long long unsigned int

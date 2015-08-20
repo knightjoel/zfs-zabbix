@@ -31,15 +31,17 @@ LDADD=          -lzfs -lgeom -lbsdxml -lsbuf \
 
 endif
 ifeq ($(UNAME_S),Linux)
-CFLAGS+= 	-Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair
+CFLAGS+= 	-Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair -DLINUX
 CFLAGS+=        -I/usr/include/libspl
 CFLAGS+=        -I/usr/include/libzfs
-CLFAGS+= 	-DLINUX
 
 endif 
 
-zio: zio.c $(OBJ)
-	$(CC) $(CFLAGS) $(LDADD) $(DPADD) -o $@ $(OBJ) 
+all: zio.c $(OBJ)
+	$(CC) $(CFLAGS) $(LDADD) $(DPADD) -o $(PROG) $(OBJ) 
+
+install:
+	install -D -m755 -oroot -groot $(PROG) /usr/local/bin/$(PROG)
 
 clean:
 	rm -f *.o zio
