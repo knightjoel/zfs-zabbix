@@ -41,7 +41,7 @@ all: zio.c $(OBJ)
 	$(CC) $(CFLAGS) $(LDADD) $(DPADD) -o $(PROG) $(OBJ) 
 
 install:
-	install -D -m755 -oroot -groot $(PROG) /usr/local/bin/$(PROG)
+	install -D -m755 -oroot -groot $(PROG) $(DESTDIR)/usr/local/bin/$(PROG)
 
 clean:
 	rm -f *.o zio
