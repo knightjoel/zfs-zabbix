@@ -41,7 +41,12 @@ all: zio.c $(OBJ)
 	$(CC) $(CFLAGS) $(LDADD) $(DPADD) -o $(PROG) $(OBJ) 
 
 install:
+ifeq ($(UNAME_S),FreeBSD)
+	install -D -m755 -oroot -gwheel $(PROG) $(DESTDIR)/usr/local/bin/$(PROG)
+else
 	install -D -m755 -oroot -groot $(PROG) $(DESTDIR)/usr/local/bin/$(PROG)
+endif
+
 
 clean:
 	rm -f *.o zio
