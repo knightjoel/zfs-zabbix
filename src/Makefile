@@ -1,11 +1,19 @@
 SRCS=           zio.c config.c fsutil.c stdprint.c vdev_status.c memlist.c dedup_stats.c
 OBJ=            config.o fsutil.o stdprint.o vdev_status.o zio.o memlist.o dedup_stats.o
 PROG=           zio
+ARCH=           amd64
+PKGFILE=        $(PROG)-$(ARCH).pkg
 NO_MAN=         1 
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),SunOS)
 CFLAGS +=       -Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair
+
+pkg:
+	pkgmk -o -d /tmp -a $(ARCH)
+	touch $(PKGFILE)
+	pkgtrans -s /tmp $(PKGFILE) $(PROG) 
+	rm -r /tmp/$(PROG)
 
 endif
 ifeq ($(UNAME_S),FreeBSD)
