@@ -105,3 +105,10 @@ print_stats_ddt_memory(config_t * cnf) {
 	fprintf(stdout, "%llu\n", cnf->zpool.ddt_memory);
 	return;
 }
+
+void
+print_status_message(zstatus_t * zstat) {
+	fprintf(stdout, "pool: %s\n", zstat->name);
+	fprintf(stdout, "%s\n", zstat->err_message);
+	return;
+}

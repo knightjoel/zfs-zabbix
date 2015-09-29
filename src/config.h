@@ -31,7 +31,8 @@ enum sw_type {
 	SW_POOLS,
 	SW_DEVICES,
 	SW_DEVSTATE,
-	SW_DDT
+	SW_DDT,
+	SW_ERR_MESSAGE,
 };
 
 typedef struct zfs_data {

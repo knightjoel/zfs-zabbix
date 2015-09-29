@@ -82,26 +82,29 @@ zfs_get_stats(zfs_handle_t * zhf, void * data) {
 int
 main(int argc, char *argv[]) {
 	config_t cnf;
-	devlist_t d;
+	zstatus_t zstat;
 
 	cnf.zname[0] = '\0';
+	zstat.err_message[0] = '\0';
+	zstat.name = cnf.zname;
 
 	g_zfs = libzfs_init();
 
 	init_config(&cnf);
-	init_devlist(&d);
+	init_devlist(&zstat.d);
 
 	get_config(argc, argv, &cnf);
 
 	zpool_iter(g_zfs, zpool_get_stats, (void *)&cnf);
 	zfs_iter_root(g_zfs, zfs_get_stats, (void *)&cnf);
-	zpool_iter(g_zfs, zpool_print_vdev, (void *)&d);
+	zpool_iter(g_zfs, zpool_print_vdev, (void *)&zstat);
+
 
 	if (cnf.sw == SW_UNDEF) {
 		fprintf(stderr, "show type is not defined\n");
 
 		return 1;
-	} else if (cnf.sw == SW_POOLS) {
+	}  else if (cnf.sw == SW_POOLS) {
 		if (cnf.ft == TP_UNDEF) {
 			fprintf(stderr, "undef format type\n");
 			return 1;
@@ -111,8 +114,8 @@ main(int argc, char *argv[]) {
 
 		return 0;
 	} else if (cnf.sw == SW_DEVSTATE) {
-		find_state_in_devlist(&d, cnf.vdev);
-		free_devlist(&d);
+		find_state_in_devlist(&zstat.d, cnf.vdev);
+		free_devlist(&zstat.d);
 
 		return 0;
 	} else if (cnf.sw == SW_DEVICES) {
@@ -120,8 +123,8 @@ main(int argc, char *argv[]) {
 			fprintf(stderr, "undef format type\n");
 			return 1;
 		}
-		else if (cnf.ft == TP_TEXT) print_devlist_text(&d);
-		else if (cnf.ft == TP_JSON) print_devlist_json(&d);
+		else if (cnf.ft == TP_TEXT) print_devlist_text(&zstat.d);
+		else if (cnf.ft == TP_JSON) print_devlist_json(&zstat.d);
 
 		return 0;
 	}
@@ -144,10 +147,10 @@ main(int argc, char *argv[]) {
 	else if (cnf.sw == SW_AVAILABLE) print_stats_available(&cnf);
 	else if (cnf.sw == SW_DEDUPRATIO)print_stats_dedupratio(&cnf);
 	else if (cnf.sw == SW_DDT)		 print_stats_ddt_memory(&cnf);
+	else if (cnf.sw == SW_ERR_MESSAGE) print_status_message(&zstat);
 
 
-
-	free_devlist(&d);
+	free_devlist(&zstat.d);
 	libzfs_fini(g_zfs);
 	return 0;
 }

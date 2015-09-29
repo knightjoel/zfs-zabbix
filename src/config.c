@@ -62,6 +62,7 @@ void get_config(int argc, char ** argv, config_t * cnf) {
 				else if (!strcmp("device-state", optarg)) cnf->sw = SW_DEVSTATE;
 				else if (!strcmp("dedupratio", optarg)) cnf->sw = SW_DEDUPRATIO;
 				else if (!strcmp("ddt-memory", optarg)) cnf->sw = SW_DDT;
+				else if (!strcmp("status", optarg)) cnf->sw = SW_ERR_MESSAGE;
 				else {
 					fprintf(stderr, "unknown show type: %s\n", optarg);
 					exit(1);
@@ -171,6 +172,7 @@ usage(char * app_name) {
 			"\tpools\t\t- print pools\n"
 	        "\tdevices\t\t- print devices in zpool\n"
 			"\tdevice-state\t- print state of device\n"
-			"\tddt-memory\t- print size of deduplication table in memory\n");
+			"\tddt-memory\t- print size of deduplication table in memory\n"
+			"\tstatus\t\t- print status message of pool\n");
 	return;
 }
