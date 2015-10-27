@@ -148,6 +148,7 @@ init_config(config_t * cnf) {
 
 void
 usage(char * app_name) {
+
 	fprintf(stdout, "%s: [-s <show>][-f <format>][-z <zpool>][-d <device>]\n\n", app_name);
 	fprintf(stdout, " -z | --zpool\t\tset zpool\n");
 	fprintf(stdout, " -s | --show\t\tshow zpools name\n");

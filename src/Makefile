@@ -39,14 +39,15 @@ LDADD=          -lzfs -lgeom -lbsdxml -lsbuf \
 
 endif
 ifeq ($(UNAME_S),Linux)
-CFLAGS+= 	-Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair -DLINUX
+CFLAGS+= 	-Wall -Wextra -std=c99 -pedantic -DLINUX
 CFLAGS+=        -I/usr/include/libspl
 CFLAGS+=        -I/usr/include/libzfs
+LDADD= 		-lzfs -lnvpair
 
 endif 
 
 all: zio.c $(OBJ)
-	$(CC) $(CFLAGS) $(LDADD) $(DPADD) -o $(PROG) $(OBJ) 
+	$(CC) $(CFLAGS) $(DPADD) -o $(PROG) $(OBJ) $(LDADD)
 
 install:
 ifeq ($(UNAME_S),FreeBSD)
