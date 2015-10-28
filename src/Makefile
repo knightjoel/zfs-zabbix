@@ -9,12 +9,6 @@ UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),SunOS)
 CFLAGS +=       -Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair
 
-pkg:
-	pkgmk -o -d /tmp -a $(ARCH)
-	touch $(PKGFILE)
-	pkgtrans -s /tmp $(PKGFILE) $(PROG) 
-	rm -r /tmp/$(PROG)
-
 endif
 ifeq ($(UNAME_S),FreeBSD)
 CFLAGS+=        -I/usr/src/cddl/contrib/opensolaris/lib/libzpool/common

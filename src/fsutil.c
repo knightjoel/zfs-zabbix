@@ -58,7 +58,7 @@ show_zpools(libzfs_handle_t * g_zfs) {
 }
 
 float
-zpool_get_dedupratio(zpool_handle_t * zhp) {
+zpool_get_dedupratio(__attribute__((__unused__))zpool_handle_t * zhp) {
 	char dedupratio_str[32];
 	float dedupratio = 0;
 
@@ -73,7 +73,7 @@ zpool_get_dedupratio(zpool_handle_t * zhp) {
 }
 
 const char *
-zpool_get_health(zpool_handle_t * zhp) {
+zpool_get_health(__attribute__((__unused__))zpool_handle_t * zhp) {
 	static char health[32];
 
 #if defined(SOLARIS) || defined(BSD)
@@ -86,7 +86,7 @@ zpool_get_health(zpool_handle_t * zhp) {
 }
 
 const char *
-zpool_get_poolname(zpool_handle_t * zhp) {
+zpool_get_poolname(__attribute__((__unused__))zpool_handle_t * zhp) {
 	static char zpool_name[ZAP_MAXNAMELEN];	
 
 #if defined(SOLARIS) || defined(BSD)

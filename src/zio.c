@@ -58,7 +58,6 @@ zpool_get_stats(zpool_handle_t * zhp, void * data) {
 		cnf->zpool.name = zpool_get_poolname(zhp);
 		cnf->zpool.ddt_memory = get_dedup_stats(config);
 	}
-	
 
 	zpool_close(zhp);
 	return 0;
