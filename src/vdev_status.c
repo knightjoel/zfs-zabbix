@@ -227,8 +227,11 @@ zpool_print_vdev(zpool_handle_t * zhp, void * data) {
         }
     }
 
+    /*
+     * todo: have to processed message to variable..
     if (msgId != NULL)
         (void) fprintf(stderr, "   see: http://zfsonlinux.org/msg/%s\n", msgId);
+    */
 
     if (config != NULL) {
         nvlist_t ** spares;

@@ -18,7 +18,7 @@
 /*
  * NOTE: libzfs is an unstable interface. 
  * This module may or may not work on your illumos distribution/version.
- * Compile with: gcc -Wall -Wextra -std=c99 -pedantic -lzfs -lnvpair zio.c config.c fsutil.c stdprint.c -o zio
+ * Try to compile with make (Makefile included)
  */
 
 
