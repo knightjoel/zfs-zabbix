@@ -4,6 +4,8 @@
 #include <sys/fs/zfs.h>
 #include <libzfs.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 #include "fsutil.h"
 #include "config.h"
@@ -84,7 +86,15 @@ main(int argc, char *argv[]) {
 	config_t cnf;
 	zstatus_t zstat;
 
-	cnf.zname[0] = '\0';
+    if(geteuid() != 0)
+    {
+        // Tell user to run app as root, then exit.
+        fprintf(stderr, "you have to run %s as root\n", argv[0]);
+        exit(1);
+    }
+
+
+    cnf.zname[0] = '\0';
 	zstat.err_message[0] = '\0';
 	zstat.name = cnf.zname;
 
